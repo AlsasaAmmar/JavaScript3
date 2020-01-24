@@ -1,3 +1,60 @@
 .alert-error {
   color: red;
+  width: 100%;
+  text-align: left;
+  font-size: 4rem;
+  border: red solid;
+  background-color: rgba(255, 4, 4, 0.185);
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+.photo {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  position: relative;
+  width: 50%;
+  max-width: 500px;
+}
+#root {
+  position: relative;
+  margin: auto;
+  width: 70%;
+}
+h1 {
+  color: white;
+  background-color: darkblue;
+  margin: 0;
+  padding: 2rem;
+  -webkit-box-shadow: -2px 20px 34px -20px rgba(0, 0, 0, 0.54);
+  -moz-box-shadow: -2px 20px 34px -20px rgba(0, 0, 0, 0.54);
+  box-shadow: -2px 20px 34px -20px rgba(0, 0, 0, 0.54);
+}
+.repo-container {
+  -webkit-box-shadow: -2px 20px 34px -20px rgba(0, 0, 0, 0.54);
+  -moz-box-shadow: -2px 20px 34px -20px rgba(0, 0, 0, 0.54);
+  box-shadow: -2px 20px 34px -20px rgba(0, 0, 0, 0.54);
+}
+.list,
+.key-list {
+  list-style: none;
+  margin: 0;
+  padding: 1rem;
+}
+.key-list {
+  list-style: none;
+}
+.key-column {
+  font-weight: bolder;
+  width: 8rem;
+}
+
+@media (max-width: 800px) {
+  #root {
+    position: relative;
+    width: 100%;
+  }
 }
