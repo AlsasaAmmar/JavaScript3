@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul></ul>
+    <script>
+      var myObj = [
+        {
+          title: 'first',
+          id: 1,
+          customKey: {
+            first: 'first',
+            second: 'second',
+          },
+        },
+        {
+          title: 'second',
+          id: 2,
+        },
+        {
+          title: 'this is the third',
+          id: 3,
+        },
+      ];
+
+      const table = document.createElement('table');
+      document.body.appendChild(table);
+      const row = table.insertRow(0);
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      cell1.innerHTML = 'title';
+      cell2.innerHTML = myObj.title;
+
+      // ulEl.appendChild(el);
+      //
+      // const el = document.createElement('li');
+      // el.innerText = `No prob: ${obj[prob]}`;
+      // ulEl.appendChild(el);
+      //  }
+      // }
+    </script>
+  </body>
+</html>
