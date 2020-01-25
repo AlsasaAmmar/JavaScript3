@@ -54,7 +54,6 @@
       }
       repos
         .sort((a, b) => {
-          console.log(a.name);
           return a.name.localeCompare(b.name);
         })
         .slice(0, 10)
@@ -94,7 +93,23 @@
           infoForks.innerText = repo.forks;
 
           let infoUpdate = update.insertCell(1);
-          infoUpdate.innerText = repo.updated_at;
+          infoUpdate.innerText =
+            repo.updated_at
+              .replace('T', ', ')
+              .replace('Z', ' ')
+              .replace(/-/g, '/')
+              .slice(0, 11) +
+            ' ' +
+            formateTime(repo.updated_at);
+
+          function formateTime(time) {
+            let hours = time.slice(11, 13);
+            let AmOrPm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12 || 12;
+            let minutes = time.slice(14, 16);
+            let finalTime = hours + ':' + minutes + ' ' + AmOrPm;
+            return finalTime;
+          }
 
           function appendProperty(repo, listProperty) {
             for (let property in repo) {
