@@ -87,7 +87,15 @@
           infoName.innerText = repo.name;
 
           let infoDescription = description.insertCell(1);
-          infoDescription.innerText = repo.description;
+          infoDescription.innerText = checkIfDataAvailable(repo.description);
+
+          function checkIfDataAvailable(data) {
+            if (data === null) {
+              return 'Not available';
+            } else {
+              return data;
+            }
+          }
 
           let infoForks = forks.insertCell(1);
           infoForks.innerText = repo.forks;
