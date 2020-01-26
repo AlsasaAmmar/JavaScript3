@@ -118,19 +118,6 @@
             let finalTime = hours + ':' + minutes + ' ' + AmOrPm;
             return finalTime;
           }
-
-          function appendProperty(repo, listProperty) {
-            for (let property in repo) {
-              if (property === listProperty) {
-                let el = createAndAppend('li', ulEl);
-                if (repo[listProperty] != null) {
-                  el.innerText = repo[listProperty];
-                } else {
-                  el.innerText = 'data not available';
-                }
-              }
-            }
-          }
         });
     });
   }
