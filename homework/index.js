@@ -176,7 +176,7 @@
           fetch(firstRepoContributors, {
             method: 'GET',
             headers: new Headers({
-              Authorization: 'Bearer efcdbd98068a3fee0aa698add1ec67d3506a434f',
+              Authorization: 'Bearer ae17fef581a8b6c3a605cb6f50fa0b1cd9deb825',
             }),
           }).then(function(response1) {
             errorHandler(response1);
@@ -204,7 +204,7 @@
               method: 'GET',
               headers: new Headers({
                 Authorization:
-                  'Bearer efcdbd98068a3fee0aa698add1ec67d3506a434f',
+                  'Bearer ae17fef581a8b6c3a605cb6f50fa0b1cd9deb825',
               }),
             }).then(function(response) {
               errorHandler(response);
