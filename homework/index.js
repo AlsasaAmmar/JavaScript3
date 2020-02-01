@@ -65,9 +65,55 @@
       return data;
     }
   }
+  //updates the persons info
+  function updateContributor(parent, person) {
+    const contributorBox = createAndAppend('div', parent, {
+      class: 'contributorClass',
+    });
+    const photo = createAndAppend('img', contributorBox, {
+      src: person.avatar_url,
+      class: 'images',
+    });
+    const contributorName = createAndAppend('a', contributorBox, {
+      text: person.login,
+      href: person.html_url,
+      target: '_blank',
+      class: 'name',
+    });
+
+    const contributionsNum = createAndAppend('p', contributorBox, {
+      text: person.contributions,
+      class: 'contributionsNum',
+    });
+  }
+
+  //deletes elemeents childeren
+  function deleteChilderen(element) {
+    let child = element.lastElementChild;
+    while (child) {
+      contributorsWrapper.removeChild(child);
+      child = contributorsWrapper.lastElementChild;
+    }
+  }
+  //handles errors
+  function errorHandler(response) {
+    if (response.status !== 200) {
+      const errorDiv = createAndAppend('div', mainSection, {
+        class: 'alert-error',
+      });
+      createAndAppend('img', errorDiv, {
+        class: 'photo',
+        src: 'https://media3.giphy.com/media/Y4wgyGATg0rRYCZGOs/source.gif',
+      });
+      return;
+    }
+  }
 
   function main(url) {
     const table = createAndAppend('table', repoContainer);
+    // const tableKeys = [update, forks, description, name].forEach(tableKey => {
+    //   table.insertRow(0);
+    // });
     const update = table.insertRow(0);
     const forks = table.insertRow(0);
     const description = table.insertRow(0);
@@ -113,53 +159,10 @@
         formateTime(repo.updated_at);
     }
 
-    //creates contributor
-    function createContributor(parent) {
-      const contributorBox = createAndAppend('div', parent);
-      const photo = createAndAppend('img', contributorBox);
-      const contributionsNum = createAndAppend('p', contributorBox);
-    }
-    //updates the persons info
-    function updateContributor(parent, person) {
-      const contributorBox = createAndAppend('div', parent, {
-        class: 'contributorClass',
-      });
-      const photo = createAndAppend('img', contributorBox, {
-        src: person.avatar_url,
-        class: 'images',
-      });
-      const contributorName = createAndAppend('a', contributorBox, {
-        text: person.login,
-        href: person.html_url,
-        target: '_blank',
-        class: 'name',
-      });
-
-      const contributionsNum = createAndAppend('p', contributorBox, {
-        text: person.contributions,
-        class: 'contributionsNum',
-      });
-    }
-    //handles errors
-    function errorHandler(response) {
-      if (response.status !== 200) {
-        const errorDiv = createAndAppend('div', repoContainer, {
-          class: 'alert-error',
-        });
-        createAndAppend('img', errorDiv, {
-          class: 'photo',
-          src: 'https://media3.giphy.com/media/Y4wgyGATg0rRYCZGOs/source.gif',
-        });
-        return;
-      }
-    }
     fetch(url)
       .then(function(response) {
         errorHandler(response);
-        // Examine the text in the response
         response.json().then(function(repos) {
-          console.log(repos);
-
           repos
             .sort((a, b) => {
               return a.name.localeCompare(b.name);
@@ -176,25 +179,19 @@
           fetch(firstRepoContributors, {
             method: 'GET',
             headers: new Headers({
-              Authorization: 'Bearer ae17fef581a8b6c3a605cb6f50fa0b1cd9deb825',
+              Authorization: 'Bearer f130de4def5f184b0d5c210291b69e17193068ad',
             }),
           }).then(function(response1) {
             errorHandler(response1);
             response1.json().then(response1 => {
-              console.log(response1);
               response1.forEach(person => {
                 updateContributor(contributorsWrapper, person);
               });
             });
           });
-          select.addEventListener('click', () => {
-            let child = contributorsWrapper.lastElementChild;
-            while (child) {
-              contributorsWrapper.removeChild(child);
-              child = contributorsWrapper.lastElementChild;
-            }
-          });
-          select.onchange = () => {
+
+          select.addEventListener('change', () => {
+            deleteChilderen(contributorsWrapper);
             let index = select.value;
             let selectedRepo = repos[index];
             updateTable(selectedRepo);
@@ -204,20 +201,17 @@
               method: 'GET',
               headers: new Headers({
                 Authorization:
-                  'Bearer ae17fef581a8b6c3a605cb6f50fa0b1cd9deb825',
+                  'Bearer f130de4def5f184b0d5c210291b69e17193068ad',
               }),
             }).then(function(response) {
               errorHandler(response);
               response.json().then(response => {
-                console.log(response);
                 response.forEach(function(contributor, i) {
-                  console.log(i);
-
                   updateContributor(contributorsWrapper, contributor);
                 });
               });
             });
-          };
+          });
         });
       })
       .catch(function(err) {
