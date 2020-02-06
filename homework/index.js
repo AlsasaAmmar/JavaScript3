@@ -10,24 +10,48 @@
   const contributorsBox = createAndAppend('div', contributorContainer, {
     class: 'contributor-container',
   });
+  const token = '37cc442ac75555218b6547af80fe5af9b9aad944';
   const contributorsWrapper = document.querySelector('.contributors-box');
   const select = createAndAppend('select', header, { class: 'selectEl' });
 
   //this function fetches Json and uses a call back function on the link passed as a para
-  function fetchJSON(url, cb) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', url);
-    xhr.responseType = 'json';
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status <= 299) {
-        cb(null, xhr.response);
-      } else {
-        cb(new Error(`Network error: ${xhr.status} - ${xhr.statusText}`));
-      }
-    };
-    xhr.onerror = () => cb(new Error('Network request failed'));
-    xhr.send();
+  async function getData(url, cb) {
+    try {
+      const response = await axios.get(url);
+      const data = response.data;
+      return data;
+    } catch (error) {
+      cb(error);
+    }
   }
+  async function getDataWithHeaders(url, cb, token) {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: url,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data;
+      return data;
+    } catch (error) {
+      cb(error);
+    }
+  }
+  // const xhr = new XMLHttpRequest();
+  // xhr.open('GET', url);
+  // xhr.responseType = 'json';
+  // xhr.onload = () => {
+  //   if (xhr.status >= 200 && xhr.status <= 299) {
+  //     cb(null, xhr.response);
+  //   } else {
+  //     cb(new Error(`Network error: ${xhr.status} - ${xhr.statusText}`));
+  //   }
+  // };
+  // xhr.onerror = () => cb(new Error('Network request failed'));
+  // xhr.send();
+
   //this function creates and appends a element (name ='the element you want' , parent = where, options = styles and so one)
   function createAndAppend(name, parent, options = {}) {
     const elem = document.createElement(name);
@@ -111,112 +135,86 @@
 
   function main(url) {
     const table = createAndAppend('table', repoContainer);
-    // const tableKeys = [update, forks, description, name].forEach(tableKey => {
-    //   table.insertRow(0);
-    // });
-    const update = table.insertRow(0);
-    const forks = table.insertRow(0);
-    const description = table.insertRow(0);
-    const name = table.insertRow(0);
-
-    let cellName = name.insertCell(0);
-    cellName.innerText = 'Repository :';
-
-    let cellDescription = description.insertCell(0);
-    cellDescription.innerText = 'Description :';
-
-    let cellforks = forks.insertCell(0);
-    cellforks.innerText = 'Forks :';
-
-    let cellUpdate = update.insertCell(0);
-    cellUpdate.innerText = 'Last Updated :';
-    let infoName = name.insertCell(1);
-    let infoDescription = description.insertCell(1);
-    let infoForks = forks.insertCell(1);
-    let infoUpdate = update.insertCell(1);
-
-    let cells = document.getElementsByTagName('td');
-    for (let i = 0; i < cells.length; i++) {
-      const element = cells[i];
-      if (i % 2) {
-        element.classList.add('.list');
-      } else {
-        element.classList.add('key-column');
+    const cellsArr = [];
+    const rows = ['Update', 'Forks', 'Description', 'Name'];
+    rows.forEach((key, i) => {
+      const row = table.insertRow(0);
+      const rightCell = row.insertCell(0);
+      rightCell.innerText = `${key}:`;
+      let leftCells = row.insertCell(1);
+      cellsArr.push(leftCells);
+    });
+    function updateTable(repo) {
+      cellsArr.forEach((key, i) => {
+        switch (i) {
+          case 3:
+            key.innerHTML = `<a href='${repo.html_url}'target="_blank">${repo.name}</a>`;
+            break;
+          case 2:
+            key.innerText = checkIfDataAvailable(repo.description);
+            break;
+          case 1:
+            key.innerText = repo.forks;
+            break;
+          case 0:
+            key.innerText =
+              repo.updated_at
+                .replace('T', ', ')
+                .replace('Z', ' ')
+                .replace(/-/g, '/')
+                .slice(0, 11) +
+              ' ' +
+              formateTime(repo.updated_at);
+            break;
+        }
+      });
+      let cells = document.getElementsByTagName('td');
+      for (let i = 0; i < cells.length; i++) {
+        const element = cells[i];
+        if (i % 2) {
+          element.classList.add('.list');
+        } else {
+          element.classList.add('key-column');
+        }
       }
     }
-    //updates the tables info
-    function updateTable(repo) {
-      infoName.innerHTML = `<a href='${repo.html_url}'target="_blank">${repo.name}</a>`;
-      infoDescription.innerText = checkIfDataAvailable(repo.description);
-      infoForks.innerText = repo.forks;
-      infoUpdate.innerText =
-        repo.updated_at
-          .replace('T', ', ')
-          .replace('Z', ' ')
-          .replace(/-/g, '/')
-          .slice(0, 11) +
-        ' ' +
-        formateTime(repo.updated_at);
-    }
-
-    fetch(url)
-      .then(function(response) {
-        errorHandler(response);
-        response.json().then(function(repos) {
-          repos
-            .sort((a, b) => {
-              return a.name.localeCompare(b.name);
-            })
-            .forEach((repo, i) => {
-              const option = createAndAppend('option', select, {
-                value: i,
-                text: repo.name,
-              });
-            });
-
-          updateTable(repos[0]);
-          let firstRepoContributors = `https://api.github.com/repos/HackYourFuture/${repos[0].name}/contributors `;
-          fetch(firstRepoContributors, {
-            method: 'GET',
-            headers: new Headers({
-              Authorization: 'Bearer f130de4def5f184b0d5c210291b69e17193068ad',
-            }),
-          }).then(function(response1) {
-            errorHandler(response1);
-            response1.json().then(response1 => {
-              response1.forEach(person => {
-                updateContributor(contributorsWrapper, person);
-              });
-            });
-          });
-
-          select.addEventListener('change', () => {
-            deleteChilderen(contributorsWrapper);
-            let index = select.value;
-            let selectedRepo = repos[index];
-            updateTable(selectedRepo);
-
-            let contributors = `https://api.github.com/repos/HackYourFuture/${selectedRepo.name}/contributors `;
-            fetch(contributors, {
-              method: 'GET',
-              headers: new Headers({
-                Authorization:
-                  'Bearer f130de4def5f184b0d5c210291b69e17193068ad',
-              }),
-            }).then(function(response) {
-              errorHandler(response);
-              response.json().then(response => {
-                response.forEach(function(contributor, i) {
-                  updateContributor(contributorsWrapper, contributor);
-                });
-              });
-            });
+    getData(url, errorHandler).then(function(repos) {
+      repos
+        .sort((a, b) => {
+          return a.name.localeCompare(b.name);
+        })
+        .forEach((repo, i) => {
+          const option = createAndAppend('option', select, {
+            value: i,
+            text: repo.name,
           });
         });
-      })
-      .catch(function(err) {
-        console.log('Fetch Error :-S', err);
+
+      updateTable(repos[0]);
+      let firstRepoContributors = `https://api.github.com/repos/HackYourFuture/${repos[0].name}/contributors `;
+
+      getDataWithHeaders(firstRepoContributors, errorHandler, token).then(
+        response1 => {
+          response1.forEach(person => {
+            updateContributor(contributorsWrapper, person);
+          });
+        },
+      );
+
+      select.addEventListener('change', () => {
+        deleteChilderen(contributorsWrapper);
+        let index = select.value;
+        let selectedRepo = repos[index];
+        updateTable(selectedRepo);
+
+        let contributors = `https://api.github.com/repos/HackYourFuture/${selectedRepo.name}/contributors `;
+        getDataWithHeaders(contributors, errorHandler, token).then(response => {
+          response.forEach(function(contributor, i) {
+            updateContributor(contributorsWrapper, contributor);
+          });
+        });
       });
+    });
   }
 
   //I need to add text to each of these ietms. and then get the info after them

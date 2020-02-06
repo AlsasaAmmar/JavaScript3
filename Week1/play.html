@@ -7,144 +7,64 @@
     <title>Document</title>
   </head>
   <body>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
-            // const token = 'efcdbd98068a3fee0aa698add1ec67d3506a434f';
-            // const promise = axios.get('https://api.github.com/user', {
-            //   headers: {
-            //     Authorization: `Bearer ${token}`,
-            //   },
-            // });
-            // console.log(promise);
-            // const secondPromise = promise.then(res => {
-            //   const username = res.data.login;
-            //   return axios.get(`https://api.github.com/user/${username}/gists`, {
-            //     headers: {
-            //       Authorization: `Bearer ${token}`,
-            //     },
-            //   });
-            // });
+      class Student {
+        //what do students have in common
+        constructor(name, age, username) {
+          this.name = name;
+          this.age = age;
+          this.username = username;
+          this.knownTopics = [];
+        }
+        //same kind of data
 
-            // secondPromise.then(res => {
-            //   console.log(res);
-            // });
-
-            function runFunctionOnObject(obj, fn, arg) {
-              obj.fn = fn;
-              obj.fn(arg);
-            }
-            runFunctionOnObject(
-              { name: 'Kelley' },
-              function(otherName) {
-                console.log('Hi ' + otherName + ', my name is ', this.name); // returns hi Stas my name is
-              },
-              'Stas',
-            );
-            runFunctionOnObject(
-              { name: 'Kelley' },
-              otherName => {
-                console.log('Hi ' + otherName + ', my name is ', this.name);
-              },
-              'Stas',
-            );
-
-
-
-                cellName.classList.add('key-column');
-                cellDescription.classList.add('key-column');
-                cellforks.classList.add('key-column');
-                cellUpdate.classList.add('key-column');
-
-                  let infoName = name.insertCell(1);
-                  infoName.innerText = repo.name;
-
-                  let infoDescription = description.insertCell(1);
-                  infoDescription.innerText = checkIfDataAvailable(repo.description);
-
-                  let infoForks = forks.insertCell(1);
-                  infoForks.innerText = repo.forks;
-
-                  let infoUpdate = update.insertCell(1);
-                  infoUpdate.innerText =
-                    repo.updated_at
-                      .replace('T', ', ')
-                      .replace('Z', ' ')
-                      .replace(/-/g, '/')
-                      .slice(0, 11) +
-                    ' ' +
-                    formateTime(repo.updated_at);
-              }
-      fetch(url)
-            .then(function(response) {
-              if (response.status !== 200) {
-                const errorDiv = createAndAppend('div', repoContainer, {
-                  class: 'alert-error',
-                });
-                createAndAppend('img', errorDiv, {
-                  class: 'photo',
-                  src: 'https://media3.giphy.com/media/Y4wgyGATg0rRYCZGOs/source.gif',
-                });
-                return;
-              }
-              // Examine the text in the response
-              response
-                .json()
-                .then(function(repos) {
-                  console.log(repos);
-                  repos
-                    .sort((a, b) => {
-                      return a.name.localeCompare(b.name);
-                    })
-                    .forEach((repo, i) => {
-                      const option = createAndAppend('option', select, {
-                        value: i,
-                        text: repo.name,
-                      });
-                    });
-                  updateTable(repos, 0);
-                  select.onchange = () => {
-                    console.log(repos[select.value]);
-                    let index = select.value;
-                    updateTable(repos, index);
-                  };
-                  return;
-                })
-                .then(repos, () => {
-                  console.log(repos);
-                })
-                .then(function(repos) {
-                  console.log(repos);
-                });
-            })
-            .catch(function(err) {
-              console.log('Fetch Error :-S', err);
-            });
+        //things they can do..
+        goToSchool() {}
+        study(topic) {
+          this.knownTopics.push(topic);
+          console.log("hi, I'm ", this.name, "and I'm studying", topic);
+        }
+        studyManyTopics(arr) {
+          arr.forEach(topic => this.knownTopics.push(topic));
+        }
+      }
+      class Teacher extends Student {
+        constructor(name, age, students) {
+          super(name, age);
+          this.students = [];
         }
 
+        async fetchStudentRepos() {
+          for (let student of this.students) {
+            console.log('swdfghj', student);
+            const res = await fetch(
+              `https://api.github.com/users/${student.username}/repos`,
+            );
+            const repos = await res.json();
+            console.log('student', student.username, 'has repos:', repos);
+          }
+        }
+        addStudents(student) {
+          this.students.push(student);
+        }
+        teachYourStudentsAbout(someNewTopic) {
+          for (let student of this.students) {
+            student.study(someNewTopic);
+          }
+        }
+      }
+      const ammar = new Student('Ammar', 33, 'AlsasaAmmar');
+      const jack = new Student('Jack', 33, 'AlsasaAmmar');
+      const dude = new Student('Dude', 33, 'AlsasaAmmar');
 
-        const contributorBox = createAndAppend('div', parent, {
-                    class: 'contributorClass',
-                  });
-                  const photo = createAndAppend('img', contributorBox, {
-                    src: person.avatar_url,
-                    class: 'images',
-                  });
-                  const contributorName = createAndAppend(
-                    'div',
-                    contributorBox,
-                    {
-                      text: person.login,
-                      class: 'name',
-                    },
-                  );
+      console.log(ammar);
 
-                  const contributionsNum = createAndAppend(
-                    'p',
-                    contributorBox,
-                    {
-                      text: person.contributions,
-                    },
-                  );
+      const kelley = new Teacher('Kelley', 34);
+      kelley.addStudents(ammar);
+      kelley.addStudents(jack);
+      kelley.addStudents(dude);
+
+      console.log(kelley.fetchStudentRepos());
     </script>
   </body>
 </html>
