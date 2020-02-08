@@ -47,10 +47,22 @@
       const contributors = createAndAppend('section', main, {
         class: 'contributors-container whiteframe',
       });
+      const repoContainer = document.querySelector('.repo-container');
+      const table = createAndAppend('table', repoContainer);
+      const rows = ['Update', 'Forks', 'Description', 'Name'];
+      rows.forEach((key, i) => {
+        const row = table.insertRow(0);
+        const rightCell = row.insertCell(0);
+        rightCell.innerText = `${key}:`;
+        let leftCells = row.insertCell(1);
+        leftCells.setAttribute('class', 'leftCells');
+      });
+
       return { header, error, main, repo, contributors };
     }
   }
 
   const ACCOUNT_KEY = 'hyf';
+  // This creates a new instance of App with the arguement
   window.onload = () => new App(accounts[ACCOUNT_KEY]);
 }

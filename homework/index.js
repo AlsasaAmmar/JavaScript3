@@ -39,19 +39,6 @@
       cb(error);
     }
   }
-  // const xhr = new XMLHttpRequest();
-  // xhr.open('GET', url);
-  // xhr.responseType = 'json';
-  // xhr.onload = () => {
-  //   if (xhr.status >= 200 && xhr.status <= 299) {
-  //     cb(null, xhr.response);
-  //   } else {
-  //     cb(new Error(`Network error: ${xhr.status} - ${xhr.statusText}`));
-  //   }
-  // };
-  // xhr.onerror = () => cb(new Error('Network request failed'));
-  // xhr.send();
-
   //this function creates and appends a element (name ='the element you want' , parent = where, options = styles and so one)
   function createAndAppend(name, parent, options = {}) {
     const elem = document.createElement(name);
@@ -64,13 +51,6 @@
       }
     });
     return elem;
-  }
-  //this function takes the repo and the ul and creates il elements, adds them to given ul and adds a text with their names
-  function renderRepoDetails(repo, ul) {
-    createAndAppend('li', ul, {
-      text: repo.name,
-      class: 'list',
-    });
   }
 
   function formateTime(time) {

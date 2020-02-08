@@ -29,12 +29,16 @@
         autofocus: 'autofocus',
       });
 
-      repos.forEach(repo =>
-        createAndAppend('option', this.select, {
-          text: repo.name,
-          value: repo.id,
-        }),
-      );
+      repos
+        .sort((a, b) => {
+          return a.name.localeCompare(b.name);
+        })
+        .forEach(repo =>
+          createAndAppend('option', this.select, {
+            text: repo.name,
+            value: repo.id,
+          }),
+        );
 
       this.select.addEventListener('change', () =>
         this.fetchData(this.select.value),
