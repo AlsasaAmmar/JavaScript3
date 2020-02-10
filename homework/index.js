@@ -1,6 +1,11 @@
 'use strict';
 
 {
+  /********************
+   * 
+   *  Configuration  
+   * 
+   /////////////////////*/
   const header = document.querySelector('.header');
   const mainSection = document.querySelector('.main-container');
   const repoContainer = document.querySelector('.repo-container');
@@ -10,11 +15,43 @@
   const contributorsBox = createAndAppend('div', contributorContainer, {
     class: 'contributor-container',
   });
-  const token = '37cc442ac75555218b6547af80fe5af9b9aad944';
+  const token = '6b0cc169d9c5b1913612f309b8af66d80d5b55ac';
   const contributorsWrapper = document.querySelector('.contributors-box');
   const select = createAndAppend('select', header, { class: 'selectEl' });
+  const table = createAndAppend('table', repoContainer);
+  const rows = ['Update', 'Forks', 'Description', 'Name'];
+  const cellsArr = createLeftCells(rows);
+  // rows.forEach((key, i) => {
+  //   const row = table.insertRow(0);
+  //   const rightCell = row.insertCell(0);
+  //   rightCell.innerText = `${key}:`;
+  //   let leftCells = row.insertCell(1);
+  //   cellsArr.push(leftCells);
+  // });
+  /********************
+   * 
+   *  Creates left cells and returns them in an array
+   @pram arr of the cells needed
+   * 
+   /////////////////////*/
 
-  //this function fetches Json and uses a call back function on the link passed as a para
+  function createLeftCells(arr) {
+    const cellsArr = [];
+    arr.forEach((key, i) => {
+      const row = table.insertRow(0);
+      const rightCell = row.insertCell(0);
+      rightCell.innerText = `${key}:`;
+      let leftCells = row.insertCell(1);
+      cellsArr.push(leftCells);
+    });
+    return cellsArr;
+  }
+  /********************
+   * 
+   *  Function gets the api 
+   *    
+   * 
+   /////////////////////*/
   async function getData(url, cb) {
     try {
       const response = await axios.get(url);
@@ -24,6 +61,10 @@
       cb(error);
     }
   }
+  /********************
+   * 
+   *  Function gets the api with headers
+   /////////////////////*/
   async function getDataWithHeaders(url, cb, token) {
     try {
       const response = await axios({
@@ -39,7 +80,12 @@
       cb(error);
     }
   }
-  //this function creates and appends a element (name ='the element you want' , parent = where, options = styles and so one)
+  /********************
+   * this function creates and appends a element (
+   * name ='the element you want' , parent = where, options = styles and so on)
+   *  
+   * 
+   /////////////////////*/
   function createAndAppend(name, parent, options = {}) {
     const elem = document.createElement(name);
     parent.appendChild(elem);
@@ -52,6 +98,11 @@
     });
     return elem;
   }
+  /********************
+   * func formats the time given in de API
+   *  
+   * 
+   /////////////////////*/
 
   function formateTime(time) {
     let hours = time.slice(11, 13);
@@ -61,7 +112,11 @@
     let finalTime = hours + ':' + minutes + ' ' + AmOrPm;
     return finalTime;
   }
-  // if the data is not there this will return 'not availabe'
+  /********************
+   * if the data is not there this will return 'not available'
+   *  
+   * 
+   /////////////////////*/
   function checkIfDataAvailable(data) {
     if (data === null) {
       return 'Not available';
@@ -69,7 +124,11 @@
       return data;
     }
   }
-  //updates the persons info
+  /********************
+   * updates the person's info
+   *  
+   * 
+   /////////////////////*/
   function updateContributor(parent, person) {
     const contributorBox = createAndAppend('div', parent, {
       class: 'contributorClass',
@@ -90,16 +149,22 @@
       class: 'contributionsNum',
     });
   }
-
-  //deletes elemeents childeren
-  function deleteChilderen(element) {
+  /********************
+   * deletes elements children
+   *  
+   * 
+   /////////////////////*/
+  function deleteChildren(element) {
     let child = element.lastElementChild;
     while (child) {
       contributorsWrapper.removeChild(child);
       child = contributorsWrapper.lastElementChild;
     }
   }
-  //handles errors
+  /********************
+   * error handler     
+   * 
+   /////////////////////*/
   function errorHandler(response) {
     if (response.status !== 200) {
       const errorDiv = createAndAppend('div', mainSection, {
@@ -112,52 +177,45 @@
       return;
     }
   }
-
-  function main(url) {
-    const table = createAndAppend('table', repoContainer);
-    const cellsArr = [];
-    const rows = ['Update', 'Forks', 'Description', 'Name'];
-    rows.forEach((key, i) => {
-      const row = table.insertRow(0);
-      const rightCell = row.insertCell(0);
-      rightCell.innerText = `${key}:`;
-      let leftCells = row.insertCell(1);
-      cellsArr.push(leftCells);
+  /********************
+   * updates table content   
+   * 
+   /////////////////////*/
+  function updateTable(repo) {
+    cellsArr.forEach((key, i) => {
+      switch (i) {
+        case 3:
+          key.innerHTML = `<a href='${repo.html_url}'target="_blank">${repo.name}</a>`;
+          break;
+        case 2:
+          key.innerText = checkIfDataAvailable(repo.description);
+          break;
+        case 1:
+          key.innerText = repo.forks;
+          break;
+        case 0:
+          key.innerText =
+            repo.updated_at
+              .replace('T', ', ')
+              .replace('Z', ' ')
+              .replace(/-/g, '/')
+              .slice(0, 11) +
+            ' ' +
+            formateTime(repo.updated_at);
+          break;
+      }
     });
-    function updateTable(repo) {
-      cellsArr.forEach((key, i) => {
-        switch (i) {
-          case 3:
-            key.innerHTML = `<a href='${repo.html_url}'target="_blank">${repo.name}</a>`;
-            break;
-          case 2:
-            key.innerText = checkIfDataAvailable(repo.description);
-            break;
-          case 1:
-            key.innerText = repo.forks;
-            break;
-          case 0:
-            key.innerText =
-              repo.updated_at
-                .replace('T', ', ')
-                .replace('Z', ' ')
-                .replace(/-/g, '/')
-                .slice(0, 11) +
-              ' ' +
-              formateTime(repo.updated_at);
-            break;
-        }
-      });
-      let cells = document.getElementsByTagName('td');
-      for (let i = 0; i < cells.length; i++) {
-        const element = cells[i];
-        if (i % 2) {
-          element.classList.add('.list');
-        } else {
-          element.classList.add('key-column');
-        }
+    let cells = document.getElementsByTagName('td');
+    for (let i = 0; i < cells.length; i++) {
+      const element = cells[i];
+      if (i % 2) {
+        element.classList.add('.list');
+      } else {
+        element.classList.add('key-column');
       }
     }
+  }
+  function main(url) {
     getData(url, errorHandler).then(function(repos) {
       repos
         .sort((a, b) => {
@@ -182,7 +240,7 @@
       );
 
       select.addEventListener('change', () => {
-        deleteChilderen(contributorsWrapper);
+        deleteChildren(contributorsWrapper);
         let index = select.value;
         let selectedRepo = repos[index];
         updateTable(selectedRepo);
