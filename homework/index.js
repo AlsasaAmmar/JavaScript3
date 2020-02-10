@@ -21,13 +21,6 @@
   const table = createAndAppend('table', repoContainer);
   const rows = ['Update', 'Forks', 'Description', 'Name'];
   const cellsArr = createLeftCells(rows);
-  // rows.forEach((key, i) => {
-  //   const row = table.insertRow(0);
-  //   const rightCell = row.insertCell(0);
-  //   rightCell.innerText = `${key}:`;
-  //   let leftCells = row.insertCell(1);
-  //   cellsArr.push(leftCells);
-  // });
   /********************
    * 
    *  Creates left cells and returns them in an array
