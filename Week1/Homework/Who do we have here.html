@@ -16,17 +16,20 @@
       const url = 'https://www.randomuser.me/api';
       xhr.responseType = 'json';
       xhr.onload = function() {
-        if (xhr.status != 200) {
-          if (xhr.status >= 400 && xhr.status <= 500) {
-            console.log('Check your code something wrong with the request!');
-          } else {
-            console.log(
-              'You have done what you can but the server is not responding! ',
-            );
-          }
-        } else {
+        if (xhr.status == 200) {
           console.log(xhr.response);
+          return;
         }
+        if (xhr.status >= 400 && xhr.status < 500) {
+          console.log('Check your code something wrong with the request!');
+        } else {
+          console.log(
+            'You have done what you can but the server is not responding! ',
+          );
+        }
+      };
+      xhr.onerror = function() {
+        console.log('Check your connection');
       };
       xhr.open('GET', url);
       xhr.send();

@@ -8,26 +8,25 @@
     <title>Document</title>
   </head>
   <body>
-    <button id="btn1">Using XMLHttpRequest</button>
-    <button id="btn2">Using Axios</button>
+    <button id="btnXhr">Using XMLHttpRequest</button>
+    <button id="btnAxios">Using Axios</button>
     <ul></ul>
 
     <script>
-      const btn1 = document.getElementById('btn1');
-      const btn2 = document.getElementById('btn2');
+      const btnXhr = document.getElementById('btnXhr');
+      const btnAxios = document.getElementById('btnAxios');
       const url = 'https://dog.ceo/api/breeds/image/random';
 
-      btn1.addEventListener('click', addDogPhotoUsingXML);
-      btn2.addEventListener('click', addDogPhotoUsingAxios);
-
-      const ulEl = document.getElementsByTagName('ul')[0];
-      const liEl = document.createElement('li');
-      const picEl = document.createElement('img');
-      liEl.style.listStyle = 'none';
-      liEl.appendChild(picEl);
-      ulEl.appendChild(liEl);
+      btnXhr.addEventListener('click', addDogPhotoUsingXML);
+      btnAxios.addEventListener('click', addDogPhotoUsingAxios);
 
       function addDogPhotoUsingXML(data) {
+        const ulEl = document.getElementsByTagName('ul')[0];
+        const liEl = document.createElement('li');
+        const picEl = document.createElement('img');
+        liEl.style.listStyle = 'none';
+        liEl.appendChild(picEl);
+        ulEl.appendChild(liEl);
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
         xhr.onload = function() {
@@ -46,6 +45,12 @@
       }
 
       function addDogPhotoUsingAxios() {
+        const ulEl = document.getElementsByTagName('ul')[0];
+        const liEl = document.createElement('li');
+        const picEl = document.createElement('img');
+        liEl.style.listStyle = 'none';
+        liEl.appendChild(picEl);
+        ulEl.appendChild(liEl);
         axios
           .get(url)
           .then(function(response) {
@@ -55,9 +60,6 @@
           .catch(function(error) {
             // handle error
             console.log(error);
-          })
-          .then(function() {
-            // always executed
           });
       }
     </script>
