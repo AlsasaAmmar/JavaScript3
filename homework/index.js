@@ -7,6 +7,7 @@
   const contributorContainer = document.querySelector(
     '.contributors-container',
   );
+  const token = '98d1c9573a5d89af3d54be22e0908f60eeca4027';
   const contributorsBox = createAndAppend('div', contributorContainer, {
     class: 'contributor-container',
   });
@@ -40,13 +41,6 @@
       }
     });
     return elem;
-  }
-  //this function takes the repo and the ul and creates il elements, adds them to given ul and adds a text with their names
-  function renderRepoDetails(repo, ul) {
-    createAndAppend('li', ul, {
-      text: repo.name,
-      class: 'list',
-    });
   }
 
   function formateTime(time) {
@@ -89,10 +83,8 @@
 
   //deletes elemeents childeren
   function deleteChilderen(element) {
-    let child = element.lastElementChild;
-    while (child) {
-      contributorsWrapper.removeChild(child);
-      child = contributorsWrapper.lastElementChild;
+    while (element.lastElementChild) {
+      element.removeChild(element.lastElementChild);
     }
   }
   //handles errors
@@ -119,23 +111,23 @@
     const description = table.insertRow(0);
     const name = table.insertRow(0);
 
-    let cellName = name.insertCell(0);
+    const cellName = name.insertCell(0);
     cellName.innerText = 'Repository :';
 
-    let cellDescription = description.insertCell(0);
+    const cellDescription = description.insertCell(0);
     cellDescription.innerText = 'Description :';
 
-    let cellforks = forks.insertCell(0);
+    const cellforks = forks.insertCell(0);
     cellforks.innerText = 'Forks :';
 
-    let cellUpdate = update.insertCell(0);
+    const cellUpdate = update.insertCell(0);
     cellUpdate.innerText = 'Last Updated :';
-    let infoName = name.insertCell(1);
-    let infoDescription = description.insertCell(1);
-    let infoForks = forks.insertCell(1);
-    let infoUpdate = update.insertCell(1);
+    const infoName = name.insertCell(1);
+    const infoDescription = description.insertCell(1);
+    const infoForks = forks.insertCell(1);
+    const infoUpdate = update.insertCell(1);
 
-    let cells = document.getElementsByTagName('td');
+    const cells = document.getElementsByTagName('td');
     for (let i = 0; i < cells.length; i++) {
       const element = cells[i];
       if (i % 2) {
@@ -149,14 +141,7 @@
       infoName.innerHTML = `<a href='${repo.html_url}'target="_blank">${repo.name}</a>`;
       infoDescription.innerText = checkIfDataAvailable(repo.description);
       infoForks.innerText = repo.forks;
-      infoUpdate.innerText =
-        repo.updated_at
-          .replace('T', ', ')
-          .replace('Z', ' ')
-          .replace(/-/g, '/')
-          .slice(0, 11) +
-        ' ' +
-        formateTime(repo.updated_at);
+      infoUpdate.innerText = new Date(repo.updated_at).toLocaleString('nl-NL');
     }
 
     fetch(url)
@@ -179,7 +164,7 @@
           fetch(firstRepoContributors, {
             method: 'GET',
             headers: new Headers({
-              Authorization: 'Bearer f130de4def5f184b0d5c210291b69e17193068ad',
+              Authorization: `Bearer${token}`,
             }),
           }).then(function(response1) {
             errorHandler(response1);
@@ -200,8 +185,7 @@
             fetch(contributors, {
               method: 'GET',
               headers: new Headers({
-                Authorization:
-                  'Bearer f130de4def5f184b0d5c210291b69e17193068ad',
+                Authorization: `Bearer${token}`,
               }),
             }).then(function(response) {
               errorHandler(response);
